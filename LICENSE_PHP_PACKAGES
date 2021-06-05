@@ -1,0 +1,40 @@
+Name: pmpr-coger/projeto
+Version: 0.1.0
+Licenses: proprietary
+Dependencies:
+
+Name                                Version  License  
+psr/cache                           2.0.0    MIT      
+psr/container                       1.1.1    MIT      
+psr/event-dispatcher                1.0.0    MIT      
+psr/log                             1.1.4    MIT      
+symfony/cache                       v5.3.0   MIT      
+symfony/cache-contracts             v2.4.0   MIT      
+symfony/config                      v5.3.0   MIT      
+symfony/console                     v5.3.0   MIT      
+symfony/dependency-injection        v5.3.0   MIT      
+symfony/deprecation-contracts       v2.4.0   MIT      
+symfony/dotenv                      v5.3.0   MIT      
+symfony/error-handler               v5.3.0   MIT      
+symfony/event-dispatcher            v5.3.0   MIT      
+symfony/event-dispatcher-contracts  v2.4.0   MIT      
+symfony/filesystem                  v5.3.0   MIT      
+symfony/finder                      v5.3.0   MIT      
+symfony/flex                        v1.13.3  MIT      
+symfony/framework-bundle            v5.3.0   MIT      
+symfony/http-client-contracts       v2.4.0   MIT      
+symfony/http-foundation             v5.3.1   MIT      
+symfony/http-kernel                 v5.3.1   MIT      
+symfony/polyfill-intl-grapheme      v1.23.0  MIT      
+symfony/polyfill-intl-normalizer    v1.23.0  MIT      
+symfony/polyfill-mbstring           v1.23.0  MIT      
+symfony/polyfill-php73              v1.23.0  MIT      
+symfony/polyfill-php80              v1.23.0  MIT      
+symfony/polyfill-php81              v1.23.0  MIT      
+symfony/routing                     v5.3.0   MIT      
+symfony/runtime                     v5.3.0   MIT      
+symfony/service-contracts           v2.4.0   MIT      
+symfony/string                      v5.3.0   MIT      
+symfony/var-dumper                  v5.3.0   MIT      
+symfony/var-exporter                v5.3.0   MIT      
+symfony/yaml                        v5.3.0   MIT      
