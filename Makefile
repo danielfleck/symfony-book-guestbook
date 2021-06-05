@@ -15,20 +15,28 @@ up: .gerar-env-local .composer-install .yarn-install
 down:
 	@docker-compose down --rmi local -v --remove-orphans
 
-log:
+log: up
 	@docker-compose logs -f
 
-app-bash: up .gerar-env-local
+app-bash: up
 	@docker-compose exec app bash
 	@make chown
 
-app-bash-cmd: up .gerar-env-local
+app-bash-cmd: up
 	@docker-compose exec app bash $(CMD)
 	@make chown
 
-symfony-cmd: up .gerar-env-local
-	docker-compose exec app symfony $(SYMFONY_CMD)
+symfony-cmd: up
+	@docker-compose exec app symfony $(SYMFONY_CMD)
 	@make chown
+
+qa: up
+	@$(DOCKER_APP_RUN) vendor/bin/php-cs-fixer fix --allow-risky yes
+	@$(DOCKER_APP_RUN) vendor/bin/phpstan analyse --level 4 src tests
+	@make test
+
+test:
+	@$(DOCKER_APP_RUN) vendor/bin/phpunit
 
 clean:
 	@rm -rf $(PWD)/vendor/ $(PWD)/node_modules/ $(PWD)/var/ $(PWD)/.env.local $(PWD)/composer.lock $(PWD)/yarn.lock
