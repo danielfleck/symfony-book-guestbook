@@ -1,0 +1,12 @@
+version: "3"
+services:
+  app:
+    image: ${APP_IMAGE}
+    volumes:
+      - ./:/srv/app
+    ports:
+      - 443:443
+    networks:
+      - netapp
+networks:
+  netapp:
