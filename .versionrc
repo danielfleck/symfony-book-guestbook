@@ -3,6 +3,10 @@
     {
       "filename": "composer.json",
       "type": "json"
+    },
+    {
+      "filename": "APP_VERSION",
+      "type": "plain-text"
     }
   ]
 }

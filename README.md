@@ -1,5 +1,11 @@
 # PROJETO
 
+## 0 VERSÃO
+```bash
+> Versão: 0.0.0
+> Data: 2021-06-05 22:45:50-0300
+```
+
 ## 1 DESENVOLVIMENTO
 
 ## 2 CONTRIBUIÇÕES (_CONTRIBUTING_)
