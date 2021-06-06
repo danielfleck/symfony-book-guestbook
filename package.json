@@ -7,6 +7,9 @@
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "devDependencies": {
+    "@commitlint/config-conventional": "^12.1.4",
+    "commitlint": "^12.1.4",
+    "husky": "^6.0.0",
     "standard-version": "^9.3.0"
   },
   "standard-version": {

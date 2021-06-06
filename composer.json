@@ -6,6 +6,17 @@
     "readme": "README.md",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "authors": [
+      {
+        "name": "Daniel Rodrigo Fleck",
+        "email": "fleck@pm.pr.gov.br",
+        "homepage": "https://www.github.com/danielfleck",
+        "role": "Developer"
+      }
+    ],
+    "support": {
+      "issues": "https://github.com/pmpr-coger/projeto-symfony/issues"
+    },
     "require": {
         "php": ">=8.0.7",
         "ext-ctype": "*",
