@@ -30,6 +30,10 @@ symfony-cmd: up
 	@docker-compose exec app symfony $(SYMFONY_CMD)
 	@make chown
 
+yarn-cmd:
+	@$(DOCKER_YARN_RUN) $(YARN_CMD)
+	@make chown
+
 qa: up
 	@$(DOCKER_APP_RUN) vendor/bin/php-cs-fixer fix --allow-risky yes
 	@$(DOCKER_APP_RUN) vendor/bin/phpstan analyse --level 4 src tests

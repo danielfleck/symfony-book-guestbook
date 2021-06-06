@@ -1,0 +1,11 @@
+{
+  "name": "projeto",
+  "version": "0.1.0",
+  "description": "Esqueleto para projeto symfony",
+  "repository": "https://github.com/pmpr-coger/esqueleto-symfony.git",
+  "author": "Daniel Rodrigo Fleck <fleck@pm.pr.gov.br>",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "standard-version": "^9.3.0"
+  }
+}
