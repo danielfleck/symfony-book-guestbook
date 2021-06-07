@@ -17,7 +17,7 @@ SYMFONY_CMD=
 chown:
 	@sudo chown -R $(USER):$(USER) $(PWD)
 
-up: 
+up:
 	@if [ $(DOCKER_APP_STAT) = 1  ]; then echo "O container app já está rodando"; else \
 	make -s .gerar-env-local; \
 	make -s .composer-install; \
@@ -74,15 +74,15 @@ push:
 
 prerelease: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --prerelease $(VERSAO)
-	@make -s .post-release 
+	@make -s .post-release
 
 release-patch: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as patch
-	@make -s .post-release 
+	@make -s .post-release
 
 release-minor: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as minor
-	@make -s .post-release 
+	@make -s .post-release
 
 migrate:
 	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
@@ -114,7 +114,8 @@ clean:
 
 .yarn-install: .gerar-env-local
 	@echo "Instalando/Atualizando pacotes javascript"
-	@$(DOCKER_YARN_RUN) 
+	@$(DOCKER_YARN_RUN)
+	@make -s .instalacao-husky
 	@make -s chown
 
 .composer-install: .gerar-env-local
@@ -127,3 +128,7 @@ clean:
 	@proxy_test=0 env | grep -iE "proxy" >> $(ENV_FILE)
 	@echo "APP_VERSION="$(APP_VERSION) >> $(ENV_FILE)
 
+.instalacao-husky:
+	@if [ `git config --local --list | grep "core[.]hookspath.*husky" | wc -l` = 0 ]; then \
+	make yarn-cmd YARN_CMD="run husky install"; \
+	fi
