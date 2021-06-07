@@ -35,7 +35,7 @@ class Conference
     private $isInternational;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="conference")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="conference",orphanRemoval=true)
      */
     private $comments;
 
