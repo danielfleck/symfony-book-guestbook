@@ -35,6 +35,7 @@
         "phpstan/phpstan": "^0.12.88",
         "phpunit/phpunit": "^9.5",
         "symfony/debug-bundle": "^5.3",
+        "symfony/maker-bundle": "^1.31",
         "symfony/stopwatch": "^5.3",
         "symfony/twig-bundle": "^5.3",
         "symfony/var-dumper": "^5.3",
