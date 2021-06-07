@@ -11,5 +11,13 @@ services:
       - 443:443
     networks:
       - netapp
+  db_postgres:
+    image: postgres:13
+    env_file:
+      - .env.local
+    ports:
+      - 5432
+    networks:
+      - netapp
 networks:
   netapp:

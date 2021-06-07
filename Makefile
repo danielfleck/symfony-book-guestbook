@@ -36,6 +36,9 @@ app-bash: up
 	@$(DOCKER_COMPOSE) exec app bash
 	@make -s chown
 
+psql: up
+	$(DOCKER_COMPOSE) exec db_postgres su postgres -c 'psql -U $$POSTGRES_USER -d $$POSTGRES_DB -w'
+
 app-bash-cmd: up
 	@$(DOCKER_COMPOSE) exec app $(CMD)
 	@make -s chown
