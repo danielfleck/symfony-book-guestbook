@@ -1,7 +1,7 @@
 APP_VERSION=`cat $(PWD)/APP_VERSION`
 BRANCH_ATUAL=`git status | head -n 1 | awk '/.*/ { print $$3 }'`
 ENV_FILE=$(PWD)/.env.local
-DOCKER_APP_STAT=`docker-compose ps|grep "app"|wc -l`
+DOCKER_APP_STAT=`docker-compose ps|grep "app.*Up"|wc -l`
 LICENSE_PHP_PACKAGES_NAME=LICENSE_PHP_PACKAGES
 LICENSE_PHP_PACKAGES_FILE=$(PWD)/$(LICENSE_PHP_PACKAGES_NAME)
 LICENSE_JS_PACKAGES_NAME=LICENSE_JS_PACKAGES
@@ -10,18 +10,20 @@ DOCKER_COMPOSE=docker-compose --env-file $(ENV_FILE)
 DOCKER_APP_EXEC=$(DOCKER_COMPOSE) exec app
 DOCKER_APP_RUN=$(DOCKER_COMPOSE) run app
 DOCKER_YARN_RUN=docker run -v $(HOME)/.gitconfig:/root/.gitconfig --env-file $(ENV_FILE) --rm -v $(PWD):/srv/app -w /srv/app node:lts yarn
+CMD=bash
 SYMFONY_CMD=
+
 
 chown:
 	@sudo chown -R $(USER):$(USER) $(PWD)
 
 up: 
 	@if [ $(DOCKER_APP_STAT) = 1  ]; then echo "O container app já está rodando"; else \
-	make .gerar-env-local; \
-	make .composer-install; \
-	make .yarn-install; \
+	make -s .gerar-env-local; \
+	make -s .composer-install; \
+	make -s .yarn-install; \
 	$(DOCKER_COMPOSE) up -d --remove-orphans --force-recreate; \
-	make chown; \
+	make -s chown; \
 	fi
 
 down:
@@ -32,24 +34,34 @@ log: up
 
 app-bash: up
 	@$(DOCKER_COMPOSE) exec app bash
-	@make chown
+	@make -s chown
 
 app-bash-cmd: up
-	@$(DOCKER_COMPOSE) exec app bash $(CMD)
-	@make chown
+	@$(DOCKER_COMPOSE) exec app $(CMD)
+	@make -s chown
 
 symfony-cmd: up
 	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD)
-	@make chown
+	@make -s chown
 
 yarn-cmd:
 	@$(DOCKER_YARN_RUN) $(YARN_CMD)
-	@make chown
+	@make -s chown
 
 qa: up
 	@$(DOCKER_APP_RUN) vendor/bin/php-cs-fixer fix --allow-risky yes
 	@$(DOCKER_APP_RUN) vendor/bin/phpstan analyse --level 4 src tests
-	@make test
+	@make -s test
+	@make -s phploc
+
+phploc: up
+	@make app-bash-cmd CMD="vendor/bin/phploc src tests --log-csv /srv/app/doc/phploc/temp.csv"
+	@make chown
+	@echo -n "\"" >> $(PWD)/doc/phploc/historico.csv
+	@echo -n `date "+%Y-%m-%d %H:%M:%S%z"` >> $(PWD)/doc/phploc/historico.csv
+	@echo -n "\"," >> $(PWD)/doc/phploc/historico.csv
+	@tail -n 1 $(PWD)/doc/phploc/temp.csv >> $(PWD)/doc/phploc/historico.csv
+	@rm $(PWD)/doc/phploc/temp.csv >> $(PWD)/doc/phploc/historico.csv
 
 test:
 	@$(DOCKER_APP_RUN) vendor/bin/phpunit
@@ -62,15 +74,15 @@ push:
 
 prerelease: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --prerelease $(VERSAO)
-	@make .post-release 
+	@make -s .post-release 
 
 release-patch: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as patch
-	@make .post-release 
+	@make -s .post-release 
 
 release-minor: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as minor
-	@make .post-release 
+	@make -s .post-release 
 
 migrate:
 	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
@@ -80,8 +92,8 @@ clean:
 	@echo "Arquivos removidos"
 
 .post-release:
-	@make build
-	@make push
+	@make -s build
+	@make -s push
 
 .test-branch:
 	@if [ ! $(BRANCH_ATUAL) = "release" ]; then \
@@ -98,17 +110,17 @@ clean:
 	@date "+%Y-%m-%d %H:%M:%S%z" >> $(LICENSE_JS_PACKAGES_FILE)
 	@echo -n "Atualizado em: " >> $(LICENSE_PHP_PACKAGES_FILE)
 	@date "+%Y-%m-%d %H:%M:%S%z" >> $(LICENSE_PHP_PACKAGES_FILE)
-	@make chown
+	@make -s chown
 
 .yarn-install: .gerar-env-local
 	@echo "Instalando/Atualizando pacotes javascript"
 	@$(DOCKER_YARN_RUN) 
-	@make chown
+	@make -s chown
 
 .composer-install: .gerar-env-local
 	@echo "Instalando/Atualizando pacotes do composer"
 	@if [ -d $(PWD)/vendor ]; then $(DOCKER_APP_RUN) composer update; else $(DOCKER_APP_RUN) composer install; fi
-	@make chown
+	@make -s chown
 
 .gerar-env-local:
 	@cat $(PWD)/.env > $(ENV_FILE)

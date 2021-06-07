@@ -30,6 +30,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
+        "phploc/phploc": "^7.0",
         "phpstan/phpstan": "^0.12.88",
         "phpunit/phpunit": "^9.5"
     },

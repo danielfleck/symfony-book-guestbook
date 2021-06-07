@@ -59,6 +59,9 @@
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
     },
+    "phploc/phploc": {
+        "version": "7.0.2"
+    },
     "phpspec/prophecy": {
         "version": "1.13.0"
     },
