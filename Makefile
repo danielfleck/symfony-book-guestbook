@@ -1,34 +1,35 @@
 APP_VERSION=`cat $(PWD)/APP_VERSION`
-DOCKER_APP_EXEC=docker-compose --env-file $(ENV_FILE) exec app
-DOCKER_APP_RUN=docker-compose --env-file $(ENV_FILE) run app
-DOCKER_YARN_RUN=docker run -v $(HOME)/.gitconfig:/root/.gitconfig --env-file $(ENV_FILE) --rm -v $(PWD):/srv/app -w /srv/app node:lts yarn
-ENV_FILE=$(PWD)/.env.local
-SYMFONY_CMD=
 BRANCH_ATUAL=`git status | head -n 1 | awk '/.*/ { print $$3 }'`
+ENV_FILE=$(PWD)/.env.local
+DOCKER_COMPOSE=docker-compose --env-file $(ENV_FILE)
+DOCKER_APP_EXEC=$(DOCKER_COMPOSE) exec app
+DOCKER_APP_RUN=$(DOCKER_COMPOSE) run app
+DOCKER_YARN_RUN=docker run -v $(HOME)/.gitconfig:/root/.gitconfig --env-file $(ENV_FILE) --rm -v $(PWD):/srv/app -w /srv/app node:lts yarn
+SYMFONY_CMD=
 
 chown:
 	@sudo chown -R $(USER):$(USER) $(PWD)
 
 up: .gerar-env-local .composer-install .yarn-install
-	@docker-compose --env-file $(ENV_FILE) up -d --remove-orphans --force-recreate
+	@$(DOCKER_COMPOSE) up -d --remove-orphans --force-recreate
 	@make chown
 
 down:
-	@docker-compose down --rmi local -v --remove-orphans
+	@$(DOCKER_COMPOSE) down --rmi local -v --remove-orphans
 
 log: up
-	@docker-compose logs -f
+	@$(DOCKER_COMPOSE) logs -f
 
 app-bash: up
-	@docker-compose exec app bash
+	@$(DOCKER_COMPOSE) exec app bash
 	@make chown
 
 app-bash-cmd: up
-	@docker-compose exec app bash $(CMD)
+	@$(DOCKER_COMPOSE) exec app bash $(CMD)
 	@make chown
 
 symfony-cmd: up
-	@docker-compose exec app symfony $(SYMFONY_CMD)
+	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD)
 	@make chown
 
 yarn-cmd:
@@ -68,7 +69,7 @@ release-minor: .test-branch yarn
 	make push
 
 migrate:
-	@docker-compose exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
+	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
 
 clean:
 	@rm -rf $(PWD)/vendor/ $(PWD)/node_modules/ $(PWD)/var/ $(PWD)/.env.local $(PWD)/composer.lock $(PWD)/yarn.lock
