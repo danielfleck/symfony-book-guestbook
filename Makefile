@@ -23,6 +23,7 @@ up:
 	make -s .composer-install; \
 	make -s .yarn-install; \
 	$(DOCKER_COMPOSE) up -d --remove-orphans --force-recreate; \
+	sleep 10; \
 	make -s migrate; \
 	make -s chown; \
 	fi
