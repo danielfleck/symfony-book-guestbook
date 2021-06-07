@@ -25,6 +25,7 @@
         "symfony/dotenv": "5.3.*",
         "symfony/flex": "^1.3.1",
         "symfony/framework-bundle": "5.3.*",
+        "symfony/monolog-bundle": "^3.7",
         "symfony/runtime": "5.3.*",
         "symfony/yaml": "5.3.*"
     },
@@ -33,8 +34,10 @@
         "phploc/phploc": "^7.0",
         "phpstan/phpstan": "^0.12.88",
         "phpunit/phpunit": "^9.5",
+        "symfony/debug-bundle": "^5.3",
         "symfony/stopwatch": "^5.3",
         "symfony/twig-bundle": "^5.3",
+        "symfony/var-dumper": "^5.3",
         "symfony/web-profiler-bundle": "^5.3"
     },
     "config": {

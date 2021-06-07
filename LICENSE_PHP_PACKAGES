@@ -4,6 +4,7 @@ Licenses: proprietary
 Dependencies:
 
 Name                                Version  License  
+monolog/monolog                     2.2.0    MIT      
 psr/cache                           2.0.0    MIT      
 psr/container                       1.1.1    MIT      
 psr/event-dispatcher                1.0.0    MIT      
@@ -25,6 +26,8 @@ symfony/framework-bundle            v5.3.0   MIT
 symfony/http-client-contracts       v2.4.0   MIT      
 symfony/http-foundation             v5.3.1   MIT      
 symfony/http-kernel                 v5.3.1   MIT      
+symfony/monolog-bridge              v5.3.0   MIT      
+symfony/monolog-bundle              v3.7.0   MIT      
 symfony/polyfill-intl-grapheme      v1.23.0  MIT      
 symfony/polyfill-intl-normalizer    v1.23.0  MIT      
 symfony/polyfill-mbstring           v1.23.0  MIT      
@@ -38,4 +41,4 @@ symfony/string                      v5.3.0   MIT
 symfony/var-dumper                  v5.3.0   MIT      
 symfony/var-exporter                v5.3.0   MIT      
 symfony/yaml                        v5.3.0   MIT      
-Atualizado em: 2021-06-07 15:58:11-0300
+Atualizado em: 2021-06-07 16:00:46-0300
