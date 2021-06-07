@@ -6,6 +6,7 @@ services:
       - .env.local
     volumes:
       - ./:/srv/app
+      - ./dev.php.ini:/usr/local/etc/php/conf.d/dev.ini
     ports:
       - 443:443
     networks:
