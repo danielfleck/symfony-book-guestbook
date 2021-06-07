@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+PWD=`pwd`
 APP_VERSION=`cat $PWD/APP_VERSION`
 DATETIME=`date "+%Y-%m-%d %H:%M:%S%z"`
 sed -i "s/^> Versão:.*/> Versão: $APP_VERSION/" README.md

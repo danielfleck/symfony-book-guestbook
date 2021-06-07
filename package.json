@@ -14,7 +14,7 @@
   },
   "standard-version": {
     "scripts": {
-      "postbump": "sh standard-version-postbump.sh"
+      "postbump": "sh bin/standard-version-postbump.sh"
     }
   }
 }

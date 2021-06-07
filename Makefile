@@ -1,6 +1,11 @@
 APP_VERSION=`cat $(PWD)/APP_VERSION`
 BRANCH_ATUAL=`git status | head -n 1 | awk '/.*/ { print $$3 }'`
 ENV_FILE=$(PWD)/.env.local
+DOCKER_APP_STAT=`docker-compose ps|grep "app"|wc -l`
+LICENSE_PHP_PACKAGES_NAME=LICENSE_PHP_PACKAGES
+LICENSE_PHP_PACKAGES_FILE=$(PWD)/$(LICENSE_PHP_PACKAGES_NAME)
+LICENSE_JS_PACKAGES_NAME=LICENSE_JS_PACKAGES
+LICENSE_JS_PACKAGES_FILE=$(PWD)/$(LICENSE_JS_PACKAGES_NAME)
 DOCKER_COMPOSE=docker-compose --env-file $(ENV_FILE)
 DOCKER_APP_EXEC=$(DOCKER_COMPOSE) exec app
 DOCKER_APP_RUN=$(DOCKER_COMPOSE) run app
@@ -10,9 +15,14 @@ SYMFONY_CMD=
 chown:
 	@sudo chown -R $(USER):$(USER) $(PWD)
 
-up: .gerar-env-local .composer-install .yarn-install
-	@$(DOCKER_COMPOSE) up -d --remove-orphans --force-recreate
-	@make chown
+up: 
+	@if [ $(DOCKER_APP_STAT) = 1  ]; then echo "O container app já está rodando"; else \
+	make .gerar-env-local; \
+	make .composer-install; \
+	make .yarn-install; \
+	$(DOCKER_COMPOSE) up -d --remove-orphans --force-recreate; \
+	make chown; \
+	fi
 
 down:
 	@$(DOCKER_COMPOSE) down --rmi local -v --remove-orphans
@@ -51,22 +61,16 @@ push:
 	@echo "Pushing... TODO"
 
 prerelease: .test-branch yarn
-	$(DOCKER_YARN_RUN) run standard-version --no-verify --prerelease $(VERSAO)
-	make .bump
-	make build
-	make push
+	@$(DOCKER_YARN_RUN) run standard-version --no-verify --prerelease $(VERSAO)
+	@make .post-release 
 
 release-patch: .test-branch yarn
-	$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as patch
-	make .bump
-	make build
-	make push
+	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as patch
+	@make .post-release 
 
 release-minor: .test-branch yarn
-	$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as minor
-	make .bump
-	make build
-	make push
+	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as minor
+	@make .post-release 
 
 migrate:
 	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
@@ -75,21 +79,30 @@ clean:
 	@rm -rf $(PWD)/vendor/ $(PWD)/node_modules/ $(PWD)/var/ $(PWD)/.env.local $(PWD)/composer.lock $(PWD)/yarn.lock
 	@echo "Arquivos removidos"
 
+.post-release:
+	@make build
+	@make push
+
 .test-branch:
 	@if [ ! $(BRANCH_ATUAL) = "release" ]; then \
   echo "\e[1;40;31mLiberações são permitidas apenas na branch 'release'\e[0m"; \
   exit 255; \
   fi
 
-.gerar-arquivo-com-licencas:
-	@$(DOCKER_YARN_RUN) licenses list --prod > LICENSE_JS_PACKAGES
+.gerar-arquivo-com-licencas: up
+	@$(DOCKER_YARN_RUN)
+	@$(DOCKER_YARN_RUN) licenses list --prod > $(LICENSE_JS_PACKAGES_FILE)
 	@$(DOCKER_APP_RUN) composer licenses --no-dev --no-interaction --no-cache --no-ansi > LICENSE_PHP_PACKAGES
-	@sed -i "/Xdebug:.*Could not connect/d" LICENSE_PHP_PACKAGES
+	@sed -i "/Xdebug:.*Could not connect/d" $(LICENSE_PHP_PACKAGES_FILE)
+	@echo -n "Atualizado em: " >> $(LICENSE_JS_PACKAGES_FILE)
+	@date "+%Y-%m-%d %H:%M:%S%z" >> $(LICENSE_JS_PACKAGES_FILE)
+	@echo -n "Atualizado em: " >> $(LICENSE_PHP_PACKAGES_FILE)
+	@date "+%Y-%m-%d %H:%M:%S%z" >> $(LICENSE_PHP_PACKAGES_FILE)
 	@make chown
 
 .yarn-install: .gerar-env-local
 	@echo "Instalando/Atualizando pacotes javascript"
-	@$(DOCKER_YARN_RUN) licenses list --prod > LICENSE_JS_PACKAGES
+	@$(DOCKER_YARN_RUN) 
 	@make chown
 
 .composer-install: .gerar-env-local
@@ -101,4 +114,4 @@ clean:
 	@cat $(PWD)/.env > $(ENV_FILE)
 	@proxy_test=0 env | grep -iE "proxy" >> $(ENV_FILE)
 	@echo "APP_VERSION="$(APP_VERSION) >> $(ENV_FILE)
-	@make .gerar-arquivo-com-licencas
+
