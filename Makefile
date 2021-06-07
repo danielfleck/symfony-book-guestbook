@@ -88,6 +88,9 @@ release-minor: .test-branch yarn
 	@$(DOCKER_YARN_RUN) run standard-version --no-verify --release-as minor
 	@make -s .post-release
 
+criar-migracao:
+	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console make:migration --quiet --no-debug
+
 migrate:
 	@$(DOCKER_COMPOSE) exec app symfony $(SYMFONY_CMD) console doctrine:migrations:migrate --no-interaction --allow-no-migration --quiet
 
